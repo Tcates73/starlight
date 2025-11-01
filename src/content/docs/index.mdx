@@ -1,36 +1,105 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
+title: Vibe State
+description: State management that just vibes with your code - intuitive, lightweight, and powerful.
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../assets/houston.webp
+  tagline: State management that just vibes with your code ✨
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Get Started
+      link: /getting-started/quick-start/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/vibestate/vibestate
       icon: external
       variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## Why Vibe State?
+
+State management shouldn't be complicated. Vibe State gives you the power of Redux with the simplicity of hooks - no boilerplate, no ceremony, just pure vibes.
+
+```jsx
+import { createStore } from 'vibestate';
+
+const useCounter = createStore({ count: 0 })
+  .actions({
+    increment: (state) => ({ count: state.count + 1 }),
+    decrement: (state) => ({ count: state.count - 1 }),
+  });
+
+function Counter() {
+  const [state, actions] = useCounter();
+  return (
+    <div>
+      <h1>{state.count}</h1>
+      <button onClick={actions.increment}>+</button>
+      <button onClick={actions.decrement}>-</button>
+    </div>
+  );
+}
+```
+
+## Key Features
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="Zero Boilerplate" icon="rocket">
+		No reducers, no action types, no switch statements. Just define your state and actions.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="TypeScript First" icon="approve-check">
+		Built with TypeScript, fully typed out of the box. Autocomplete everywhere.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+	<Card title="React Hooks" icon="star">
+		Feels natural with React hooks. Use state anywhere in your component tree.
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Tiny Bundle" icon="magnifier">
+		Less than 2KB gzipped. Tree-shakeable and optimized for modern bundlers.
+	</Card>
+	<Card title="DevTools Ready" icon="setting">
+		Built-in support for Redux DevTools. Time-travel debugging out of the box.
+	</Card>
+	<Card title="Async Actions" icon="forward-slash">
+		Handle async operations naturally with async/await. No middleware needed.
 	</Card>
 </CardGrid>
+
+## Quick Example
+
+```jsx
+// Create a store
+const useTodos = createStore({ todos: [], filter: 'all' })
+  .actions({
+    addTodo: (state, text) => ({
+      todos: [...state.todos, { id: Date.now(), text, done: false }]
+    }),
+    toggleTodo: (state, id) => ({
+      todos: state.todos.map(t =>
+        t.id === id ? { ...t, done: !t.done } : t
+      )
+    }),
+    setFilter: (state, filter) => ({ filter }),
+  })
+  .computed({
+    visibleTodos: (state) =>
+      state.filter === 'all'
+        ? state.todos
+        : state.todos.filter(t => t.done === (state.filter === 'done'))
+  });
+
+// Use it in components
+function TodoApp() {
+  const [state, actions] = useTodos();
+
+  return (
+    <div>
+      {state.visibleTodos.map(todo => (
+        <Todo key={todo.id} todo={todo} onToggle={actions.toggleTodo} />
+      ))}
+    </div>
+  );
+}
+```
+
+Ready to vibe with better state management? [Get started now →](/getting-started/quick-start/)
