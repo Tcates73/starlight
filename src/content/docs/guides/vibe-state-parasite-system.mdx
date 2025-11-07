@@ -1,0 +1,258 @@
+---
+title: Vibe State Parasite SEO Automation System
+description: Multi-platform behavioral content engine combining Medium authority, Reddit social proof, and LinkedIn credibility.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Strategic Overview
+
+<CardGrid>
+  <Card title="Mission" icon="puzzle-piece">
+    Build a psychology-first content engine that creates compounding authority while requiring only a few hours of human oversight each week.
+  </Card>
+  <Card title="3-Platform Domination" icon="network">
+    Medium establishes long-form authority, Reddit amplifies social proof, and LinkedIn signals status to high-intent professionals.
+  </Card>
+</CardGrid>
+
+### Platform Roles
+
+- **Medium (Primary):** Domain Authority 94, long-form authority asset.
+- **Reddit (Amplifier):** Domain Authority 91, community validation engine.
+- **LinkedIn (Status Signal):** Domain Authority 97, professional credibility layer.
+
+### Behavior Loop
+
+1. Medium content builds the authority asset.
+2. Reddit discussions manufacture social proof.
+3. LinkedIn posts convert high-intent professionals.
+4. Performance analytics feed topic and format improvements.
+
+## Phase 1: Content Generation Engine
+
+Use the following master prompt when generating articles with Claude, GPT-4, or equivalent models.
+
+### Master Prompt Template
+
+```
+ROLE: Behavioral systems architect writing for high-performing founders who understand psychology drives performance.
+
+AUDIENCE PROFILE:
+- Identity: "I'm a founder/operator who thinks in systems, not tactics"
+- Pain: Stuck in execution mode, missing psychological leverage
+- Desire: Transform users through behavioral architecture, not just features
+- Sophistication: Familiar with BJ Fogg, habit loops, PERMA, wants application
+
+CONTENT STRUCTURE:
+[IDENTITY HOOK - 15 words max]
+[PAIN AMPLIFICATION - 75 words]
+[INSIGHT BOMB - 100 words]
+[BEHAVIOR SYSTEM BREAKDOWN - 300 words]
+[TACTICAL EXECUTION - 200 words]
+[IDENTITY ELEVATION CTA]
+
+OPTIMIZATION REQUIREMENTS:
+- Include 3 FAQ pairs (Question + Answer format)
+- Name-drop 2-3 authorities (e.g., BJ Fogg, Nir Eyal, Daniel Kahneman)
+- Reference tools, frameworks, psychological terms
+- Conversational yet precise voice
+
+VARIABLES:
+TOPIC: {insert_topic}
+PLATFORM: {Medium | Reddit | LinkedIn}
+WORD COUNT: {600-800 for Medium | 300-400 for Reddit | 200-300 for LinkedIn}
+```
+
+## Phase 2: Automation Workflows (Make.com)
+
+### Workflow 1 – Intelligence & Content Generation
+
+1. **Trigger:** Weekly schedule (Monday 6am).
+2. **Topic Research:** Query Perplexity (`/search`) and Reddit API for trends in r/entrepreneur, r/startups, and r/SaaS.
+3. **Topic Ranking:** Use OpenAI/Claude to score topics on identity alignment, pain amplification, actionability, and system-building opportunity.
+4. **Content Generation:** Run the top three topics through the master prompt.
+5. **Schema Injection:** Send each article to a Python webhook that appends JSON-LD schemas.
+6. **Content Storage:** Store in Airtable or Google Sheets with fields for platform, status, publish date, and URLs.
+
+### Workflow 2 – Multi-Platform Publishing
+
+1. **Trigger:** Airtable watch for records marked "Ready to Publish" and scheduled for today.
+2. **Router:** Split into Medium, Reddit, and LinkedIn branches.
+3. **Medium:** POST `/v1/users/{userId}/posts` with Markdown content and tags `Behavioral Psychology`, `Startup Growth`, `Systems Thinking`.
+4. **Reddit:** POST `/api/submit` to targeted subreddits, using a question-form title, first 300 words, and a "read more" link.
+5. **LinkedIn:** POST `/v2/ugcPosts` with a 200-word summary and Medium link.
+6. **Tracking:** Update Airtable with published URLs and status.
+
+### Workflow 3 – Engagement Amplification
+
+1. Delay two hours after publishing, then seed a strategic Reddit comment via a secondary account.
+2. One hour later, upvote the post and comment through a tertiary account.
+3. Trigger Medium's Twitter/X share.
+4. Send Discord or email notifications to your community.
+5. Optional: Boost high performers (performance score > 8) via Facebook and LinkedIn ads.
+
+### Workflow 4 – Performance Tracking & Optimization
+
+1. Daily schedule at 11pm ET pulls Medium, Reddit, and LinkedIn analytics.
+2. Scrape Perplexity for new citations referencing your URLs.
+3. Analyze metrics with OpenAI to score engagement depth, viral potential, and citation likelihood.
+4. Log metrics in Google Sheets and update Airtable performance scores.
+5. Flag underperformers (score < 5) for variant testing with diagnostic prompts.
+
+## Phase 3: Python Automation Scripts
+
+### Schema Injection Service (PythonAnywhere)
+
+```python
+from flask import Flask, request, jsonify
+import json
+from datetime import datetime
+import re
+
+app = Flask(__name__)
+
+@app.route('/inject-schema', methods=['POST'])
+def inject_schema():
+    data = request.json
+    content = data['content']
+    title = data['title']
+    author = "Tyler Cates"
+    org = "Vibe State"
+
+    faq_pattern = r'\*\*Q: (.*?)\*\*\s*A: (.*?)(?=\*\*Q:|$)'
+    faqs = re.findall(faq_pattern, content, re.DOTALL)
+
+    faq_schema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": q.strip(),
+                "acceptedAnswer": {"@type": "Answer", "text": a.strip()},
+            }
+            for q, a in faqs
+        ],
+    }
+
+    article_schema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": title,
+        "author": {"@type": "Person", "name": author},
+        "publisher": {"@type": "Organization", "name": org},
+        "datePublished": datetime.now().isoformat(),
+        "description": content[:160],
+    }
+
+    schema_html = f"""
+
+<script type=\"application/ld+json\">\n{json.dumps(article_schema, indent=2)}\n</script>
+
+<script type=\"application/ld+json\">\n{json.dumps(faq_schema, indent=2)}\n</script>
+    """
+
+    enhanced_content = content + schema_html
+
+    return jsonify({
+        "enhanced_content": enhanced_content,
+        "schemas_added": ["Article", "FAQPage"],
+        "faq_count": len(faqs),
+    })
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+```
+
+### Perplexity Citation Tracker
+
+```python
+import requests
+from bs4 import BeautifulSoup
+
+def check_citations(urls, search_queries):
+    results = []
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+
+    for query in search_queries:
+        search_url = f"https://www.perplexity.ai/search?q={query}"
+        try:
+            response = requests.get(search_url, headers=headers, timeout=10)
+            response.raise_for_status()
+            page = response.text
+            soup = BeautifulSoup(page, 'html.parser')
+
+            for url in urls:
+                if url in page:
+                    results.append({
+                        "query": query,
+                        "url": url,
+                        "cited": True,
+                        "context": "Found in search results",
+                    })
+        except Exception as exc:
+            print(f"Error checking {query}: {exc}")
+
+    return results
+
+def citation_webhook_handler(request):
+    data = request.json
+    urls = data['urls']
+    queries = [
+        "behavioral psychology startup growth",
+        "habit formation systems",
+        "identity-based behavior change",
+    ]
+
+    citations = check_citations(urls, queries)
+    return {"citations": citations, "count": len(citations)}
+```
+
+## Phase 4: Week 1 Execution Checklist
+
+1. **Day 1–2 – Infrastructure:**
+   - Open Make.com (Pro), gather API keys for OpenAI/Anthropic, Medium, Reddit, LinkedIn.
+   - Configure Airtable base with fields for title, content, platform, status, publish date, platform URLs, and performance score.
+   - Deploy Python scripts to PythonAnywhere.
+2. **Day 3–4 – Workflow Build:**
+   - Assemble Workflow 1 and test with three topics.
+   - Build Workflow 2 focusing on Medium publishing, verify schema webhook responses.
+3. **Day 5 – First Launch:**
+   - Generate three pieces, manually review voice (≈15 minutes each).
+   - Publish to Medium and monitor metrics.
+4. **Day 6–7 – Scale Up:**
+   - Enable Reddit and LinkedIn branches.
+   - Activate engagement amplification and performance tracking workflows.
+
+## Behavioral Tracking Dashboard
+
+Use Google Data Studio with Airtable or Google Sheets data sources. Track acquisition (views, click-throughs), engagement (time on page, scroll depth, comments), and retention (return visitors, citation count, performance trend). Maintain a behavioral insights panel highlighting top psychological hooks, friction points, and identity alignment scores.
+
+## Month 1 Projection
+
+- **Week 1:** 3 pieces, 500–1,000 views, debugging workflows.
+- **Week 2:** 7 pieces, 2,000–4,000 views, first Reddit traction.
+- **Week 3:** 10 pieces, 5,000–8,000 views, LinkedIn spike.
+- **Week 4:** 12 pieces, 10,000–15,000 views, initial Perplexity citations.
+- **Day 30 Outcome:** 32 published pieces, 3 automated platforms, 15,000–25,000 total views, 2–5 citations, 2–3 hours/week of human oversight.
+
+## Critical Success Factors
+
+- **What Works:** Psychology-first content, multi-platform distribution, engineered engagement pushes, citation tracking, closed-loop feedback.
+- **What Fails:** Generic AI copy, zero human review, publish-and-pray launches, no citation tracking.
+
+## Immediate Next Actions
+
+1. Weekend: create Make.com account, gather API keys, configure Airtable, load prompt into Claude (≈3 hours total).
+2. Monday: run Workflow 1 manually, publish three Medium pieces, monitor results.
+3. Friday: finalize automation, publish first week of content, analyze traction patterns.
+
+## System Summary
+
+- **Trigger:** Automated topic discovery anchored in psychological pain points.
+- **Agent:** AI-driven content with embedded behavioral frameworks.
+- **Feedback:** Multi-platform distribution generating social proof and citations.
+- **Growth:** Performance optimization that compounds authority.
+
+Invest 2–3 hours each week on authenticity checks and high-value engagement—the system handles the rest.
