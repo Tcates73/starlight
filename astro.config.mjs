@@ -17,6 +17,10 @@ export default defineConfig({
                                                         label: 'Vibe State Parasite System',
                                                         slug: 'guides/vibe-state-parasite-system',
                                                 },
+                                                {
+                                                        label: 'Google Business Profile Analysis Grader',
+                                                        slug: 'guides/google-business-profile-analysis-grader',
+                                                },
                                         ],
                                 },
 				{
