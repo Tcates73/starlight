@@ -1,0 +1,233 @@
+<section class="budget-game">
+  <header>
+    <p class="eyebrow">Family Budget Quest</p>
+    <h2>Stress-less Budget Dashboard</h2>
+    <p>Fill in your monthly numbers and watch your family level up in real time.</p>
+  </header>
+
+  <form id="budgetForm" class="grid">
+    <label>
+      Total monthly income ($)
+      <input type="number" name="income" min="0" step="50" value="6000" required />
+    </label>
+    <label>
+      Housing ($)
+      <input type="number" name="housing" min="0" step="10" value="1800" required />
+    </label>
+    <label>
+      Food ($)
+      <input type="number" name="food" min="0" step="10" value="900" required />
+    </label>
+    <label>
+      Transport ($)
+      <input type="number" name="transport" min="0" step="10" value="500" required />
+    </label>
+    <label>
+      Family fun ($)
+      <input type="number" name="fun" min="0" step="10" value="350" required />
+    </label>
+    <label>
+      Savings goal ($)
+      <input type="number" name="savings" min="0" step="10" value="1200" required />
+    </label>
+    <label class="wide">
+      Budget sprint timer: <span id="timerValue">15</span> minutes
+      <input type="range" name="minutes" min="5" max="45" value="15" step="5" />
+    </label>
+  </form>
+
+  <div class="hud">
+    <article>
+      <h3>Budget Health</h3>
+      <div class="meter-wrap">
+        <div id="healthMeter" class="meter"></div>
+      </div>
+      <p id="healthText">Great start! 🟢</p>
+    </article>
+
+    <article>
+      <h3>Stress Meter</h3>
+      <div class="meter-wrap danger">
+        <div id="stressMeter" class="meter"></div>
+      </div>
+      <p id="stressText">Calm and confident 😌</p>
+    </article>
+
+    <article>
+      <h3>Family XP</h3>
+      <p id="xpValue" class="xp">0 XP</p>
+      <p id="summary">Enter numbers to begin your quest.</p>
+    </article>
+  </div>
+</section>
+
+<style>
+  .budget-game {
+    --bg: linear-gradient(160deg, #0f172a 0%, #1e293b 55%, #3b0764 100%);
+    --card: rgba(15, 23, 42, 0.72);
+    color: #e2e8f0;
+    background: var(--bg);
+    border-radius: 1.25rem;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    padding: 1.5rem;
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.1), 0 14px 30px rgba(2, 6, 23, 0.35);
+    animation: floatIn 0.8s ease;
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7dd3fc;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .grid {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.9rem;
+  }
+
+  label {
+    background: var(--card);
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  label.wide {
+    grid-column: 1 / -1;
+  }
+
+  input {
+    width: 100%;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .hud {
+    margin-top: 1.2rem;
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .hud article {
+    background: var(--card);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 0.9rem;
+    padding: 0.85rem;
+  }
+
+  .meter-wrap {
+    height: 0.8rem;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.9);
+    margin-bottom: 0.4rem;
+  }
+
+  .meter {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #22c55e, #38bdf8);
+    transition: width 0.45s ease, background 0.45s ease;
+  }
+
+  .danger .meter {
+    background: linear-gradient(90deg, #22c55e, #ef4444);
+  }
+
+  .xp {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0.25rem 0;
+    color: #fef08a;
+    text-shadow: 0 0 14px rgba(250, 204, 21, 0.35);
+  }
+
+  @keyframes floatIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('budgetForm');
+  const timerValue = document.getElementById('timerValue');
+  const healthMeter = document.getElementById('healthMeter');
+  const stressMeter = document.getElementById('stressMeter');
+  const healthText = document.getElementById('healthText');
+  const stressText = document.getElementById('stressText');
+  const xpValue = document.getElementById('xpValue');
+  const summary = document.getElementById('summary');
+
+  const read = (name) => Number(form?.elements?.[name]?.value || 0);
+
+  function updateDashboard() {
+    const income = read('income');
+    const housing = read('housing');
+    const food = read('food');
+    const transport = read('transport');
+    const fun = read('fun');
+    const savings = read('savings');
+    const minutes = read('minutes');
+
+    timerValue.textContent = String(minutes);
+
+    const spent = housing + food + transport + fun + savings;
+    const leftover = income - spent;
+    const essentials = housing + food + transport;
+
+    const essentialsRatio = income ? essentials / income : 1;
+    const savingsRatio = income ? savings / income : 0;
+    const leftoverRatio = income ? leftover / income : -1;
+
+    let health = 100;
+    health -= Math.max(0, (essentialsRatio - 0.6) * 120);
+    health -= Math.max(0, (0.2 - savingsRatio) * 160);
+    health -= Math.max(0, -leftoverRatio * 300);
+    health = Math.max(0, Math.min(100, Math.round(health)));
+
+    const stress = 100 - health;
+    const xp = Math.max(0, Math.round(health * 9 + Math.max(0, leftover) / 5 - minutes * 2));
+
+    healthMeter.style.width = `${health}%`;
+    stressMeter.style.width = `${stress}%`;
+    xpValue.textContent = `${xp} XP`;
+
+    if (health > 79) {
+      healthText.textContent = 'Excellent balance! 🟢';
+      stressText.textContent = 'Low stress, family vibes are strong ✨';
+    } else if (health > 55) {
+      healthText.textContent = 'Solid plan, keep optimizing 🟡';
+      stressText.textContent = 'Manageable stress, almost there 💪';
+    } else {
+      healthText.textContent = 'High pressure! Rework your mix 🔴';
+      stressText.textContent = 'Stress spike detected — adjust categories 🧠';
+    }
+
+    summary.textContent =
+      leftover >= 0
+        ? `You still have $${leftover.toFixed(0)} left this month. Bonus XP for a faster ${minutes}-minute planning sprint.`
+        : `You are over budget by $${Math.abs(leftover).toFixed(0)}. Reduce wants first to calm the stress meter.`;
+  }
+
+  form?.addEventListener('input', updateDashboard);
+  updateDashboard();
+</script>
