@@ -21,6 +21,10 @@ export default defineConfig({
                                                         label: 'Google Business Profile Analysis Grader',
                                                         slug: 'guides/google-business-profile-analysis-grader',
                                                 },
+                                                {
+                                                        label: 'Family Budget Dashboard Game',
+                                                        slug: 'guides/family-budget-dashboard',
+                                                },
                                         ],
                                 },
 				{
