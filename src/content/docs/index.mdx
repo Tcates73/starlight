@@ -1,105 +1,125 @@
 ---
-title: Vibe State
-description: State management that just vibes with your code - intuitive, lightweight, and powerful.
+title: SendFlow
+description: Powerful transactional email API that developers love. Send emails in seconds with our simple REST API.
 template: splash
 hero:
-  tagline: State management that just vibes with your code ✨
+  tagline: Transactional email that actually delivers 📧
   actions:
-    - text: Get Started
+    - text: Get Started Free
       link: /getting-started/quick-start/
       icon: right-arrow
       variant: primary
-    - text: View on GitHub
-      link: https://github.com/vibestate/vibestate
-      icon: external
+    - text: View API Docs
+      link: /reference/send/
+      icon: document
       variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Why Vibe State?
+## Send your first email in 60 seconds
 
-State management shouldn't be complicated. Vibe State gives you the power of Redux with the simplicity of hooks - no boilerplate, no ceremony, just pure vibes.
-
-```jsx
-import { createStore } from 'vibestate';
-
-const useCounter = createStore({ count: 0 })
-  .actions({
-    increment: (state) => ({ count: state.count + 1 }),
-    decrement: (state) => ({ count: state.count - 1 }),
-  });
-
-function Counter() {
-  const [state, actions] = useCounter();
-  return (
-    <div>
-      <h1>{state.count}</h1>
-      <button onClick={actions.increment}>+</button>
-      <button onClick={actions.decrement}>-</button>
-    </div>
-  );
-}
+```bash
+curl https://api.sendflow.io/v1/send \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": "customer@example.com",
+    "from": "you@yourdomain.com",
+    "subject": "Welcome to our platform!",
+    "html": "<h1>Thanks for signing up!</h1>"
+  }'
 ```
 
-## Key Features
+## Why developers choose SendFlow
 
 <CardGrid stagger>
-	<Card title="Zero Boilerplate" icon="rocket">
-		No reducers, no action types, no switch statements. Just define your state and actions.
+	<Card title="99.9% Delivery Rate" icon="approve-check">
+		Industry-leading deliverability with automatic bounce handling and reputation management.
 	</Card>
-	<Card title="TypeScript First" icon="approve-check">
-		Built with TypeScript, fully typed out of the box. Autocomplete everywhere.
+	<Card title="5-Minute Setup" icon="rocket">
+		From signup to sending your first email in minutes. No complex configuration required.
 	</Card>
-	<Card title="React Hooks" icon="star">
-		Feels natural with React hooks. Use state anywhere in your component tree.
+	<Card title="Real-Time Analytics" icon="star">
+		Track opens, clicks, bounces, and complaints. Know exactly what's happening with your emails.
 	</Card>
-	<Card title="Tiny Bundle" icon="magnifier">
-		Less than 2KB gzipped. Tree-shakeable and optimized for modern bundlers.
+	<Card title="Developer-Friendly" icon="laptop">
+		Clean REST API, official SDKs, comprehensive docs, and responsive support.
 	</Card>
-	<Card title="DevTools Ready" icon="setting">
-		Built-in support for Redux DevTools. Time-travel debugging out of the box.
+	<Card title="Template Engine" icon="document">
+		Build beautiful email templates with our drag-and-drop editor or use HTML/Handlebars.
 	</Card>
-	<Card title="Async Actions" icon="forward-slash">
-		Handle async operations naturally with async/await. No middleware needed.
+	<Card title="Webhook Events" icon="forward-slash">
+		Get real-time notifications for deliveries, opens, clicks, bounces, and spam complaints.
 	</Card>
 </CardGrid>
 
-## Quick Example
+## Pricing that scales with you
 
-```jsx
-// Create a store
-const useTodos = createStore({ todos: [], filter: 'all' })
-  .actions({
-    addTodo: (state, text) => ({
-      todos: [...state.todos, { id: Date.now(), text, done: false }]
-    }),
-    toggleTodo: (state, id) => ({
-      todos: state.todos.map(t =>
-        t.id === id ? { ...t, done: !t.done } : t
-      )
-    }),
-    setFilter: (state, filter) => ({ filter }),
-  })
-  .computed({
-    visibleTodos: (state) =>
-      state.filter === 'all'
-        ? state.todos
-        : state.todos.filter(t => t.done === (state.filter === 'done'))
-  });
+| Plan | Monthly Emails | Price | Best For |
+|------|----------------|-------|----------|
+| **Free** | 10,000 | $0 | Testing & hobby projects |
+| **Starter** | 100,000 | $29 | Small businesses |
+| **Growth** | 500,000 | $99 | Growing companies |
+| **Scale** | 2M+ | Custom | Enterprise |
 
-// Use it in components
-function TodoApp() {
-  const [state, actions] = useTodos();
+**All plans include:** API access, webhooks, analytics, templates, and email support.
 
-  return (
-    <div>
-      {state.visibleTodos.map(todo => (
-        <Todo key={todo.id} todo={todo} onToggle={actions.toggleTodo} />
-      ))}
-    </div>
-  );
-}
+[Start free trial →](/getting-started/quick-start/) No credit card required.
+
+## Trusted by developers at
+
+Companies using SendFlow: Stripe, Notion, Linear, Vercel, Railway (fictional examples)
+
+## Quick Integration Examples
+
+### Node.js
+```javascript
+const sendflow = require('@sendflow/node');
+sendflow.apiKey = 'your_api_key';
+
+await sendflow.send({
+  to: 'user@example.com',
+  from: 'hello@yourdomain.com',
+  subject: 'Welcome!',
+  html: '<h1>Thanks for signing up!</h1>'
+});
 ```
 
-Ready to vibe with better state management? [Get started now →](/getting-started/quick-start/)
+### Python
+```python
+import sendflow
+
+sendflow.api_key = 'your_api_key'
+
+sendflow.send(
+  to='user@example.com',
+  from_email='hello@yourdomain.com',
+  subject='Welcome!',
+  html='<h1>Thanks for signing up!</h1>'
+)
+```
+
+### PHP
+```php
+$sendflow = new SendFlow\Client('your_api_key');
+
+$sendflow->send([
+  'to' => 'user@example.com',
+  'from' => 'hello@yourdomain.com',
+  'subject' => 'Welcome!',
+  'html' => '<h1>Thanks for signing up!</h1>'
+]);
+```
+
+## What you get
+
+✅ **Instant delivery** — Average API response time under 100ms
+✅ **Email templates** — Drag-and-drop builder + Handlebars support
+✅ **Webhooks** — Real-time event notifications
+✅ **Analytics** — Opens, clicks, bounces, complaints
+✅ **Domain authentication** — SPF, DKIM, DMARC setup guides
+✅ **Dedicated IPs** — Available on Growth+ plans
+✅ **24/7 Support** — Email support on all plans, Slack on Scale
+
+Ready to ship better emails? [Get your API key →](/getting-started/quick-start/)

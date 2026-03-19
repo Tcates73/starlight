@@ -6,11 +6,11 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'Vibe State',
-			tagline: 'State management that just vibes with your code',
+			title: 'SendFlow',
+			tagline: 'Powerful transactional email API that just works',
 			social: [
-				{ icon: 'github', label: 'GitHub', href: 'https://github.com/vibestate/vibestate' },
-				{ icon: 'twitter', label: 'Twitter', href: 'https://twitter.com/vibestate' },
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/sendflow/sendflow' },
+				{ icon: 'twitter', label: 'Twitter', href: 'https://twitter.com/sendflow' },
 			],
 			sidebar: [
 				{
@@ -18,29 +18,33 @@ export default defineConfig({
 					items: [
 						{ label: 'Introduction', slug: 'index' },
 						{ label: 'Quick Start', slug: 'getting-started/quick-start' },
-						{ label: 'Installation', slug: 'getting-started/installation' },
-						{ label: 'Core Concepts', slug: 'getting-started/concepts' },
+						{ label: 'Authentication', slug: 'getting-started/authentication' },
+						{ label: 'Send Your First Email', slug: 'getting-started/first-email' },
 					],
 				},
 				{
 					label: 'Guides',
 					items: [
-						{ label: 'Creating Stores', slug: 'guides/creating-stores' },
-						{ label: 'Using State', slug: 'guides/using-state' },
-						{ label: 'TypeScript', slug: 'guides/typescript' },
-						{ label: 'DevTools', slug: 'guides/devtools' },
+						{ label: 'Email Templates', slug: 'guides/templates' },
+						{ label: 'Webhooks', slug: 'guides/webhooks' },
+						{ label: 'Analytics & Tracking', slug: 'guides/analytics' },
+						{ label: 'Domain Setup', slug: 'guides/domains' },
 					],
 				},
 				{
 					label: 'API Reference',
-					autogenerate: { directory: 'reference' },
+					items: [
+						{ label: 'Send Email', slug: 'reference/send' },
+						{ label: 'Templates', slug: 'reference/templates' },
+						{ label: 'Webhooks', slug: 'reference/webhooks' },
+					],
 				},
 				{
-					label: 'Examples',
+					label: 'SDKs',
 					items: [
-						{ label: 'Counter App', slug: 'examples/counter' },
-						{ label: 'Todo List', slug: 'examples/todo' },
-						{ label: 'Shopping Cart', slug: 'examples/cart' },
+						{ label: 'Node.js', slug: 'sdks/nodejs' },
+						{ label: 'Python', slug: 'sdks/python' },
+						{ label: 'PHP', slug: 'sdks/php' },
 					],
 				},
 			],
