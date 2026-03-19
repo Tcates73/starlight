@@ -24,28 +24,15 @@ export default defineConfig({
 				},
 				{
 					label: 'Guides',
-					items: [
-						{ label: 'Email Templates', slug: 'guides/templates' },
-						{ label: 'Webhooks', slug: 'guides/webhooks' },
-						{ label: 'Analytics & Tracking', slug: 'guides/analytics' },
-						{ label: 'Domain Setup', slug: 'guides/domains' },
-					],
+					autogenerate: { directory: 'guides' },
 				},
 				{
 					label: 'API Reference',
-					items: [
-						{ label: 'Send Email', slug: 'reference/send' },
-						{ label: 'Templates', slug: 'reference/templates' },
-						{ label: 'Webhooks', slug: 'reference/webhooks' },
-					],
+					autogenerate: { directory: 'reference' },
 				},
 				{
-					label: 'SDKs',
-					items: [
-						{ label: 'Node.js', slug: 'sdks/nodejs' },
-						{ label: 'Python', slug: 'sdks/python' },
-						{ label: 'PHP', slug: 'sdks/php' },
-					],
+					label: 'Examples',
+					autogenerate: { directory: 'examples' },
 				},
 			],
 		}),
