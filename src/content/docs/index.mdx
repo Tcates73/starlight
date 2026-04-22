@@ -7,8 +7,8 @@ hero:
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Play Family Budget Game
+      link: /guides/family-budget-dashboard/
       icon: right-arrow
     - text: Read the Starlight docs
       link: https://starlight.astro.build
@@ -24,6 +24,9 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 	<Card title="Update content" icon="pencil">
 		Edit `src/content/docs/index.mdx` to see this page change.
 	</Card>
+	<Card title="Family Budget Game" icon="star">
+		Play the interactive dashboard at `/guides/family-budget-dashboard/`.
+	</Card>
 	<Card title="Add new content" icon="add-document">
 		Add Markdown or MDX files to `src/content/docs` to create new pages.
 	</Card>
@@ -32,5 +35,5 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 	</Card>
 	<Card title="Read the docs" icon="open-book">
 		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
-</CardGrid>
+		</Card>
+	</CardGrid>
