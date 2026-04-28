@@ -1,0 +1,488 @@
+---
+title: Thrift Flip Scanner — Production MVP Spec
+---
+
+# Thrift Flip Scanner
+
+A mobile-first “thrift arbitrage operating system” that gives a **Buy / Maybe / Pass** recommendation in under 10 seconds while a reseller is standing in-store.
+
+## 1) Full Product Spec
+
+### One-line value proposition
+**Scan thrift finds and know the real flip before you buy.**
+
+### Primary users
+- Part-time resellers
+- Vintage & clothing flippers
+- Shoe and bag arbitrage buyers
+- Small-electronics pickers
+- Home-goods resellers
+
+### Jobs-to-be-done
+1. Identify item quickly.
+2. Find reliable sold comps (not active listings).
+3. Estimate real net after fees + shipping + packaging + COGS.
+4. Decide instantly whether to buy.
+
+### MVP scope (v1)
+- Categories: clothing, shoes, bags, small electronics, home goods.
+- Marketplace comps: **eBay sold listings first** (expandable adapters for others).
+- Recommendation engine with customizable thresholds.
+- Manual correction of all key fields.
+- Guest mode + optional magic link auth.
+- Scan history + save/recheck/share/list-later actions.
+
+### Out of scope for v1
+- Live carrier API rate shopping.
+- Barcode-native mode (planned).
+- Team collaboration.
+- Crosslisting automation.
+
+### Key product principles
+- **Decision speed over data density.**
+- **Explicit uncertainty handling** (sparse comps, wide ranges, low confidence).
+- **One-hand usability** with large targets and minimal navigation depth.
+- **Instant feedback states** during processing.
+
+### Success metrics
+- Time to first recommendation (TTFR): target p50 < 8s, p90 < 12s.
+- Scan save rate: target > 35%.
+- Free → Pro conversion: target > 6% by day 30.
+- “Buy” to listed inventory conversion (self-reported): target > 45%.
+- Decision confidence score (in-app survey): target avg ≥ 4.2/5.
+
+---
+
+## 2) App Architecture
+
+### Stack
+- Frontend: Next.js (App Router) + React + Tailwind, PWA-ready.
+- Backend: Supabase (Postgres + Auth + Storage + Edge Functions).
+- AI pipeline:
+  - Vision model adapter (classification + visual attributes)
+  - OCR adapter (label/tag/model extraction)
+  - LLM query builder (vision+OCR → sold-comp query terms)
+- Marketplace adapter layer (start with eBay sold).
+
+### High-level system diagram
+1. User captures photo.
+2. `/api/scan` creates scan job and returns `scan_id` immediately.
+3. Async pipeline executes:
+   - Vision inference
+   - OCR extraction
+   - Query synthesis
+   - Comp fetch + normalization
+   - Pricing, fee, shipping, profit math
+   - Recommendation engine
+4. Client subscribes to scan status updates and progressively renders.
+5. Final result persisted to `scans`, `scan_results`, and `comps` tables.
+
+### Service boundaries (swappable)
+- `VisionProvider` interface
+- `OCRProvider` interface
+- `CompProvider` interface
+- `FeeCalculator` module
+- `ShippingEstimator` module
+- `RecommendationEngine` module
+
+### Performance design
+- Fast response pattern:
+  - optimistic UI with processing milestones
+  - partial result hydration (identity first, comps second, decision final)
+- Cache normalized sold comps by hash(query + category + size band) for 15 minutes.
+- Background retries for transient comp API failures.
+
+---
+
+## 3) Database Schema (Postgres/Supabase)
+
+### `users`
+- `id uuid pk`
+- `email text unique null`
+- `is_guest boolean default true`
+- `plan text check in ('free','pro','power') default 'free'`
+- `created_at timestamptz`
+
+### `user_settings`
+- `user_id uuid pk fk users(id)`
+- `min_net_profit numeric default 15`
+- `min_roi_percent numeric default 100`
+- `min_confidence numeric default 0.70`
+- `packaging_cost_default numeric default 1.00`
+- `marketplace_preference jsonb`
+- `category_thresholds jsonb`
+- `shipping_defaults jsonb`
+- `updated_at timestamptz`
+
+### `scans`
+- `id uuid pk`
+- `user_id uuid fk users(id)`
+- `photo_url text`
+- `status text check in ('queued','vision','ocr','comps','pricing','complete','error')`
+- `source text check in ('camera','upload')`
+- `created_at timestamptz`
+
+### `scan_identity`
+- `scan_id uuid pk fk scans(id)`
+- `title text`
+- `brand text`
+- `category text`
+- `subcategory text`
+- `confidence numeric`
+- `attributes jsonb`
+
+### `scan_ocr`
+- `scan_id uuid pk fk scans(id)`
+- `raw_text text`
+- `extracted_fields jsonb` (model, rn, size, fabric, serial, etc.)
+- `confidence numeric`
+
+### `scan_comps`
+- `id uuid pk`
+- `scan_id uuid fk scans(id)`
+- `marketplace text`
+- `listing_id text`
+- `title text`
+- `sold_price numeric`
+- `sold_at date`
+- `shipping_charged numeric`
+- `condition text`
+- `url text`
+- `meta jsonb`
+
+### `scan_summary`
+- `scan_id uuid pk fk scans(id)`
+- `low_sold numeric`
+- `median_sold numeric`
+- `high_sold numeric`
+- `comp_count int`
+- `comp_confidence numeric`
+- `price_range_ratio numeric`
+
+### `scan_profit`
+- `scan_id uuid pk fk scans(id)`
+- `estimated_sale_price numeric`
+- `best_marketplace text`
+- `platform_fee numeric`
+- `shipping_cost numeric`
+- `packaging_cost numeric`
+- `cost_of_goods numeric`
+- `net_profit numeric`
+- `roi_percent numeric`
+- `margin_percent numeric`
+
+### `scan_recommendations`
+- `scan_id uuid pk fk scans(id)`
+- `recommendation text check in ('buy','maybe','pass')`
+- `score numeric`
+- `reasons jsonb`
+- `risk_flags jsonb`
+
+### `scan_actions`
+- `id uuid pk`
+- `scan_id uuid fk scans(id)`
+- `action text` (save/recheck/open_comps/share/list_later)
+- `created_at timestamptz`
+
+### `usage_counters`
+- `user_id uuid pk fk users(id)`
+- `month_key text` (YYYY-MM)
+- `scan_count int`
+- `updated_at timestamptz`
+
+---
+
+## 4) API Routes (Next.js App Router)
+
+### Auth + profile
+- `POST /api/auth/guest`
+- `POST /api/auth/magic-link`
+- `GET /api/me`
+
+### Scan lifecycle
+- `POST /api/scan` create scan, upload photo ref, enqueue processing
+- `GET /api/scan/:id` get full scan result
+- `GET /api/scan/:id/status` get phase + progress
+- `POST /api/scan/:id/recheck` rerun comps/pricing
+- `PATCH /api/scan/:id/manual` apply user edits (brand/category/cost/condition/shipping)
+
+### Comps
+- `GET /api/scan/:id/comps` paginated sold cards + stats
+- `POST /api/comps/search` manual query override
+
+### Settings + pricing
+- `GET /api/settings`
+- `PATCH /api/settings`
+- `GET /api/fees/:marketplace`
+- `GET /api/shipping/estimate?category=&weight_band=&size=`
+
+### History + actions
+- `GET /api/history`
+- `POST /api/scan/:id/action`
+
+### Billing
+- `GET /api/plans`
+- `POST /api/checkout`
+- `POST /api/billing/webhook`
+
+---
+
+## 5) UI Wireframe Structure (Mobile-first)
+
+### Screen 1: Onboarding
+- Headline: “Scan thrift finds and know the real flip before you buy.”
+- 3 bullets: identify, net estimate, buy/no-buy.
+- CTA: “Start scanning” + “Continue as guest”.
+
+### Screen 2: Home / Camera
+- Full-width camera button (thumb zone).
+- Secondary: Upload photo.
+- Quick chips: recent categories.
+- Bottom nav: Scan / History / Settings.
+
+### Screen 3: Processing
+- Animated status stack:
+  1. Identifying item
+  2. Reading tag text
+  3. Finding sold comps
+  4. Calculating real profit
+  5. Building recommendation
+- Skeleton result card appears early.
+
+### Screen 4: Results (primary)
+- Hero badge: **BUY / MAYBE / PASS**
+- Identity block: title, brand, category, confidence.
+- Metrics row:
+  - Resale range
+  - Best marketplace
+  - Net profit
+  - ROI
+- Cost strip: fee, shipping, packaging, COGS.
+- Reason bullets.
+- Action bar: Save / Recheck / Open Comps / Share / List later.
+
+### Screen 5: Comps detail
+- Histogram + quartiles.
+- Sold listing cards (thumbnail, price, date, condition, source).
+- Filter chips: condition, price band, recency.
+
+### Screen 6: Profit breakdown
+- Formula card with editable inputs.
+- Sliders/steppers for COGS, shipping, packaging.
+- Real-time recompute of net/ROI/recommendation.
+
+### Screen 7: History
+- Search + filter by recommendation.
+- Cards: image, recommendation, net, ROI, date.
+- “Patterns” widget: top winning categories.
+
+### Screen 8: Settings
+- Thresholds (net/ROI/confidence).
+- Marketplace fee presets.
+- Shipping defaults.
+- Plan usage meter.
+
+### Screen 9: Paywall
+- Free vs Pro vs Power Seller comparison.
+- Scan limits + feature locks.
+- CTA with trust bullets and cancel-anytime note.
+
+---
+
+## 6) Landing Page Copy
+
+### Hero
+**Headline:** Stop guessing at thrift flips.  
+**Subhead:** Scan any item and get a real Buy / Maybe / Pass recommendation with comps, fees, shipping, and net profit in seconds.  
+**CTA Primary:** Start Free  
+**CTA Secondary:** Watch 20-sec demo
+
+### Credibility strip
+- Sold comps powered by marketplace data
+- Built for in-store decisions
+- Trusted by flippers and part-time resellers
+
+### Problem/Solution
+**Problem:** Price-check tools show data, but you still do the math in your head.  
+**Solution:** Thrift Flip Scanner turns messy comps into one confident decision instantly.
+
+### Feature blocks
+- Identify items + tags fast
+- Sold comp intelligence
+- Real net-profit calculator
+- Risk-aware recommendations
+- Memory that gets smarter with every scan
+
+### Final CTA
+**Don’t leave profit in the aisle.** Scan smarter before you buy.
+
+---
+
+## 7) Pricing Page Copy
+
+### Free — $0
+- 5 scans / month
+- Basic result summary
+- Guest mode supported
+- Limited history
+
+### Pro — $19/month
+- 200 scans / month
+- Full profit breakdown
+- Saved history + thresholds
+- Advanced recommendation reasoning
+- Priority processing
+
+### Power Seller — $49/month
+- Unlimited scans
+- Advanced comp analytics
+- Export + bulk history tools
+- Team seats + multi-market routing
+
+### Pricing reassurance
+- Cancel anytime
+- No annual lock required
+- Start free, upgrade when you’re flipping consistently
+
+---
+
+## 8) Core Recommendation Algorithm (Pseudocode)
+
+```pseudo
+function recommend(scan, userSettings):
+  identityConf = scan.identity.confidence
+  compCount = scan.summary.comp_count
+  compConf = scan.summary.comp_confidence
+  rangeRatio = scan.summary.price_range_ratio   // high/low
+
+  minNet = thresholdForCategory(userSettings, scan.identity.category, "min_net_profit", default=15)
+  minRoi = thresholdForCategory(userSettings, scan.identity.category, "min_roi_percent", default=100)
+  minConf = userSettings.min_confidence
+
+  net = scan.profit.net_profit
+  roi = scan.profit.roi_percent
+
+  score = 0
+  reasons = []
+  risks = []
+
+  if identityConf >= minConf: score += 20
+  else:
+    score -= 20
+    risks.push("Low identification confidence")
+
+  if compCount >= 8 and compConf >= 0.75:
+    score += 25
+    reasons.push("Strong sold comp depth")
+  else if compCount >= 4:
+    score += 10
+    risks.push("Comps are somewhat sparse")
+  else:
+    score -= 20
+    risks.push("Very sparse sold comps")
+
+  if rangeRatio >= 2.5:
+    score -= 10
+    risks.push("Wide sold range; condition-sensitive")
+
+  if net >= minNet:
+    score += 25
+    reasons.push("Net profit beats threshold")
+  else:
+    score -= 25
+
+  if roi >= minRoi:
+    score += 20
+    reasons.push("ROI beats threshold")
+  else:
+    score -= 15
+
+  if compCount < 4 and net >= minNet and roi >= minRoi:
+    score -= 8  // uncertainty downgrade guardrail
+
+  if score >= 55:
+    rec = "buy"
+  else if score >= 30:
+    rec = "maybe"
+  else:
+    rec = "pass"
+
+  return { rec, score, reasons, risks }
+```
+
+---
+
+## 9) MVP Build Order (First 14 Days)
+
+### Days 1–2
+- Project scaffold (Next.js, Tailwind, Supabase, auth/guest).
+- Schema migrations + seed fee tables.
+- Mobile nav shell + onboarding/home screens.
+
+### Days 3–4
+- Camera capture + upload fallback.
+- Scan job creation and status polling/subscription.
+- Storage integration for photos.
+
+### Days 5–6
+- Vision + OCR adapters (mock-friendly interfaces).
+- LLM query synthesis step.
+- Processing screen with progressive states.
+
+### Days 7–8
+- eBay sold comp adapter + normalization pipeline.
+- Comp summary stats + confidence computation.
+- Results hero + identity + value range cards.
+
+### Days 9–10
+- Fee/shipping/packaging math modules.
+- Recommendation engine with thresholds.
+- Profit breakdown screen with manual edits.
+
+### Days 11–12
+- History, save/recheck/list-later actions.
+- Settings and threshold customization.
+- Free-tier usage limits + paywall UX.
+
+### Days 13–14
+- QA for edge cases (sparse comps, wide ranges, low confidence).
+- Performance pass (TTFR, caching, skeletons, background retries).
+- Analytics events + release checklist + production deploy.
+
+---
+
+## 10) Polished First Version UI (Component Spec)
+
+### Visual system
+- Background: near-black `#0B1020` with elevated cards.
+- Decision colors:
+  - Buy: `#16A34A`
+  - Maybe: `#F59E0B`
+  - Pass: `#DC2626`
+- Typography: large numeric emphasis for net and ROI.
+- Button height: 52px minimum, radius 14px.
+
+### Results card hierarchy
+1. Decision badge + confidence pulse.
+2. “Expected Net” large number.
+3. Resale range + best marketplace chips.
+4. Fees/shipping breakdown mini-table.
+5. Reason bullets and risk flags.
+6. Sticky action row.
+
+### UX micro-interactions
+- Tap-to-expand reasoning details.
+- Haptic-style visual pulse on recommendation reveal.
+- Inline recompute animation when user edits costs.
+
+### Empty/error states
+- No comps: “Couldn’t find enough sold comps yet — try recheck or broaden item details.”
+- Low confidence: “We’re unsure on exact match. Edit brand/model for better comps.”
+- Network fail: local save + retry queue.
+
+### Accessibility
+- Contrast ratio ≥ 4.5:1.
+- VoiceOver labels for all action buttons.
+- Dynamic text support for key metrics.
+
+This UI direction keeps the app fast, decisive, and field-ready for one-handed in-store use.
