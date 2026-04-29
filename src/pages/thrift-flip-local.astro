@@ -1,0 +1,20 @@
+---
+const sample = {
+  rec: 'BUY',
+  title: 'Patagonia Better Sweater 1/4 Zip',
+  brand: 'Patagonia',
+  category: 'Men\'s Fleece',
+  confidence: 0.92,
+  low: 28,
+  median: 42,
+  high: 58,
+  best: 'Poshmark',
+  net: 21,
+  roi: 140,
+  fees: 8,
+  shipping: 6,
+  packaging: 1,
+  cogs: 15,
+};
+---
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Thrift Flip Scanner — Local Preview</title><style>:root{color-scheme:dark}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#050914;color:#e5e7eb;display:grid;place-items:center;min-height:100vh}.phone{width:min(420px,100vw);min-height:100vh;background:linear-gradient(180deg,#0b1020,#121a32);padding:16px;box-sizing:border-box}.card{background:#151c35;border:1px solid #273252;border-radius:16px;padding:14px;margin-bottom:12px}.badge{font-weight:800;background:#14532d;color:#dcfce7;display:inline-block;padding:6px 10px;border-radius:999px}.title{font-size:1.1rem;font-weight:700;margin:10px 0 6px}.muted{color:#9ca3af;font-size:.9rem}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#0f1730;border-radius:12px;padding:10px}.metric b{display:block;font-size:1.15rem;color:#fff}.net{font-size:2rem;font-weight:900;color:#86efac}.reasons li{margin:6px 0}.actions{position:sticky;bottom:0;background:#0b1020cc;backdrop-filter:blur(8px);padding:8px 0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}button{border:0;border-radius:10px;padding:10px 4px;font-weight:700;background:#1f2a4a;color:#dbeafe;font-size:.75rem}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.chip{background:#1f2a4a;border-radius:999px;padding:5px 9px;font-size:.8rem;color:#bfdbfe}</style></head><body><main class="phone"><div class="top"><h1 style="margin:0;font-size:1rem;">Thrift Flip Scanner</h1><span class="chip">Local Preview</span></div><section class="card"><span class="badge">{sample.rec}</span><div class="title">{sample.title}</div><div class="muted">{sample.brand} · {sample.category} · Confidence {(sample.confidence * 100).toFixed(0)}%</div><div style="margin-top:10px;">Expected Net</div><div class="net">${sample.net}</div></section><section class="card metric-grid"><div class="metric"><div class="muted">Resale Range</div><b>${sample.low}–${sample.high}</b></div><div class="metric"><div class="muted">Median Sold</div><b>${sample.median}</b></div><div class="metric"><div class="muted">Best Market</div><b>{sample.best}</b></div><div class="metric"><div class="muted">ROI</div><b>{sample.roi}%</b></div></section><section class="card"><div class="muted">Profit Breakdown</div><div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px;"><span>Platform fees</span><b>${sample.fees}</b><span>Shipping</span><b>${sample.shipping}</b><span>Packaging</span><b>${sample.packaging}</b><span>Cost of goods</span><b>${sample.cogs}</b></div></section><section class="card"><div class="muted" style="margin-bottom:8px;">Why this is a Buy</div><ul class="reasons"><li>12 solid sold comps found.</li><li>Median sold price is ${sample.median}.</li><li>After fees and shipping, net is ${sample.net}.</li><li>{sample.best} outperforms eBay for this category.</li></ul></section><nav class="actions"><button>Save</button><button>Recheck</button><button>Comps</button><button>Share</button><button>List Later</button></nav></main></body></html>
