@@ -1,0 +1,3 @@
+## 2024-03-05 - Custom Meter Accessibility
+**Learning:** When using custom `<div>` elements as visual meters for real-time dashboards (like a health or stress meter), they are entirely invisible to screen readers without specific ARIA attributes. Furthermore, dynamic text updates driven by JavaScript inputs require `aria-live` to be announced.
+**Action:** Always add `role="meter"`, `aria-valuemin`, `aria-valuemax`, and dynamically update `aria-valuenow` on custom div meters. Use `aria-live="polite"` on text elements that update in real-time based on form inputs so users relying on screen readers receive feedback on their actions.
