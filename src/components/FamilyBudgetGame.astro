@@ -40,7 +40,7 @@
     <article>
       <h3>Budget Health</h3>
       <div class="meter-wrap">
-        <div id="healthMeter" class="meter"></div>
+        <div id="healthMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Budget Health"></div>
       </div>
       <p id="healthText">Great start! 🟢</p>
     </article>
@@ -48,7 +48,7 @@
     <article>
       <h3>Stress Meter</h3>
       <div class="meter-wrap danger">
-        <div id="stressMeter" class="meter"></div>
+        <div id="stressMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Stress Meter"></div>
       </div>
       <p id="stressText">Calm and confident 😌</p>
     </article>
@@ -56,7 +56,7 @@
     <article>
       <h3>Family XP</h3>
       <p id="xpValue" class="xp">0 XP</p>
-      <p id="summary">Enter numbers to begin your quest.</p>
+      <p id="summary" aria-live="polite">Enter numbers to begin your quest.</p>
     </article>
   </div>
 </section>
@@ -113,6 +113,8 @@
     padding: 0.45rem 0.6rem;
   }
 
+  input:focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; }
+
   .hud {
     margin-top: 1.2rem;
     display: grid;
@@ -168,7 +170,7 @@
 </style>
 
 <script>
-  const form = document.getElementById('budgetForm');
+  const form = document.getElementById('budgetForm') as HTMLFormElement | null;
   const timerValue = document.getElementById('timerValue');
   const healthMeter = document.getElementById('healthMeter');
   const stressMeter = document.getElementById('stressMeter');
@@ -177,7 +179,7 @@
   const xpValue = document.getElementById('xpValue');
   const summary = document.getElementById('summary');
 
-  const read = (name) => Number(form?.elements?.[name]?.value || 0);
+  const read = (name: string) => Number((form?.elements.namedItem(name) as HTMLInputElement | null)?.value || 0);
 
   function updateDashboard() {
     const income = read('income');
@@ -188,7 +190,7 @@
     const savings = read('savings');
     const minutes = read('minutes');
 
-    timerValue.textContent = String(minutes);
+    if (timerValue) timerValue.textContent = String(minutes);
 
     const spent = housing + food + transport + fun + savings;
     const leftover = income - spent;
@@ -207,22 +209,28 @@
     const stress = 100 - health;
     const xp = Math.max(0, Math.round(health * 9 + Math.max(0, leftover) / 5 - minutes * 2));
 
-    healthMeter.style.width = `${health}%`;
-    stressMeter.style.width = `${stress}%`;
-    xpValue.textContent = `${xp} XP`;
+    if (healthMeter) {
+      healthMeter.style.width = `${health}%`;
+      healthMeter.setAttribute('aria-valuenow', health.toString());
+    }
+    if (stressMeter) {
+      stressMeter.style.width = `${stress}%`;
+      stressMeter.setAttribute('aria-valuenow', stress.toString());
+    }
+    if (xpValue) xpValue.textContent = `${xp} XP`;
 
     if (health > 79) {
-      healthText.textContent = 'Excellent balance! 🟢';
-      stressText.textContent = 'Low stress, family vibes are strong ✨';
+      if (healthText) healthText.textContent = 'Excellent balance! 🟢';
+      if (stressText) stressText.textContent = 'Low stress, family vibes are strong ✨';
     } else if (health > 55) {
-      healthText.textContent = 'Solid plan, keep optimizing 🟡';
-      stressText.textContent = 'Manageable stress, almost there 💪';
+      if (healthText) healthText.textContent = 'Solid plan, keep optimizing 🟡';
+      if (stressText) stressText.textContent = 'Manageable stress, almost there 💪';
     } else {
-      healthText.textContent = 'High pressure! Rework your mix 🔴';
-      stressText.textContent = 'Stress spike detected — adjust categories 🧠';
+      if (healthText) healthText.textContent = 'High pressure! Rework your mix 🔴';
+      if (stressText) stressText.textContent = 'Stress spike detected — adjust categories 🧠';
     }
 
-    summary.textContent =
+    if (summary) summary.textContent =
       leftover >= 0
         ? `You still have $${leftover.toFixed(0)} left this month. Bonus XP for a faster ${minutes}-minute planning sprint.`
         : `You are over budget by $${Math.abs(leftover).toFixed(0)}. Reduce wants first to calm the stress meter.`;

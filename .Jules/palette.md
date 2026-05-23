@@ -1,0 +1,3 @@
+## 2024-05-16 - Custom Progress Bars Require Explicit ARIA
+**Learning:** When using visual `div`-based custom meters or progress bars that dynamically update via JS, screen readers cannot interpret them natively. We must manually apply `role="progressbar"`, `aria-valuemin`, `aria-valuemax`, dynamically update `aria-valuenow`, and wrap dynamic textual summaries with `aria-live="polite"`.
+**Action:** Always verify custom visual meters or gauges in dashboards include the complete set of progressbar ARIA attributes and that dynamic state updates trigger polite live region announcements.
