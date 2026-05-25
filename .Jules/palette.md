@@ -1,0 +1,3 @@
+## 2025-02-14 - Real-time Feedback on Dynamic Dashboards
+**Learning:** Screen readers miss dynamic value updates (like meters updating in real-time as users slide inputs) unless `aria-valuenow` is manually managed via JS, and live regions (`aria-live="polite"`) are needed to announce dynamically-changing contextual summary text without overwhelming the user.
+**Action:** When creating form-driven dynamic dashboards with meters, always bind `aria-valuenow` alongside width updates in JS and use `aria-live="polite"` on the central summary text.
