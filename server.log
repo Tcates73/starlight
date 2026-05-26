@@ -1,0 +1,20 @@
+
+> @example/starlight-basics@0.0.1 dev /app
+> astro dev
+
+13:05:33 [types] Generated 1ms
+
+ update  ▶ New version of Astro available: 6.3.7
+  Run pnpm dlx @astrojs/upgrade to update
+
+13:05:34 [content] Syncing content
+13:05:35 [content] Synced content
+13:05:35 [vite] Re-optimizing dependencies because vite config has changed
+
+ astro  v5.18.1 ready in 3473 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+
+13:05:35 watching for file changes...
+13:06:27 [200] /guides/family-budget-dashboard 492ms
