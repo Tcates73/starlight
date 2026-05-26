@@ -1,0 +1,3 @@
+## 2024-03-24 - Focus Indicators on Dark Backgrounds
+**Learning:** Browser default focus outlines often have poor contrast on dark backgrounds (`#0f172a`), making keyboard navigation difficult for interactive elements.
+**Action:** Always implement custom `:focus-visible` styles with sufficient contrast (e.g., `#38bdf8` outline and box-shadow) and `:hover` states to ensure accessibility and clear interaction feedback in dark mode contexts.

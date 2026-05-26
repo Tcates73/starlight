@@ -111,6 +111,17 @@
     background: #0f172a;
     color: #f8fafc;
     padding: 0.45rem 0.6rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+  }
+
+  input:hover {
+    border-color: rgba(56, 189, 248, 0.6);
+  }
+
+  input:focus-visible {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
   }
 
   .hud {
@@ -168,16 +179,20 @@
 </style>
 
 <script>
-  const form = document.getElementById('budgetForm');
-  const timerValue = document.getElementById('timerValue');
-  const healthMeter = document.getElementById('healthMeter');
-  const stressMeter = document.getElementById('stressMeter');
-  const healthText = document.getElementById('healthText');
-  const stressText = document.getElementById('stressText');
-  const xpValue = document.getElementById('xpValue');
-  const summary = document.getElementById('summary');
+  const form = document.getElementById('budgetForm') as HTMLFormElement | null;
+  const timerValue = document.getElementById('timerValue') as HTMLElement;
+  const healthMeter = document.getElementById('healthMeter') as HTMLElement;
+  const stressMeter = document.getElementById('stressMeter') as HTMLElement;
+  const healthText = document.getElementById('healthText') as HTMLElement;
+  const stressText = document.getElementById('stressText') as HTMLElement;
+  const xpValue = document.getElementById('xpValue') as HTMLElement;
+  const summary = document.getElementById('summary') as HTMLElement;
 
-  const read = (name) => Number(form?.elements?.[name]?.value || 0);
+  const read = (name: string) => {
+    if (!form) return 0;
+    const el = form.elements.namedItem(name) as HTMLInputElement | null;
+    return Number(el?.value || 0);
+  };
 
   function updateDashboard() {
     const income = read('income');
