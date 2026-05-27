@@ -1,0 +1,3 @@
+## 2023-10-27 - ARIA Roles for Custom UI Meters
+**Learning:** Custom UI elements like visual progress bars or meters built with standard `div` elements are completely invisible to screen readers without explicit ARIA roles. While they look great, users relying on assistive tech miss out on this dynamic feedback.
+**Action:** Always add `role="meter"`, `aria-label`, `aria-valuemin`, `aria-valuemax`, and update `aria-valuenow` dynamically on custom `div`-based meters. Add `aria-live="polite"` to text nodes that update dynamically with the meter to ensure changes are announced.
