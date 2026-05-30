@@ -111,6 +111,13 @@
     background: #0f172a;
     color: #f8fafc;
     padding: 0.45rem 0.6rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus-visible {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
   }
 
   .hud {
@@ -168,7 +175,7 @@
 </style>
 
 <script>
-  const form = document.getElementById('budgetForm');
+  const form = document.getElementById('budgetForm') as HTMLFormElement | null;
   const timerValue = document.getElementById('timerValue');
   const healthMeter = document.getElementById('healthMeter');
   const stressMeter = document.getElementById('stressMeter');
@@ -177,9 +184,14 @@
   const xpValue = document.getElementById('xpValue');
   const summary = document.getElementById('summary');
 
-  const read = (name) => Number(form?.elements?.[name]?.value || 0);
+  const read = (name: string): number => {
+    if (!form) return 0;
+    const el = form.elements.namedItem(name) as HTMLInputElement | null;
+    return Number(el?.value || 0);
+  };
 
   function updateDashboard() {
+    if (!timerValue || !healthMeter || !stressMeter || !xpValue || !healthText || !stressText || !summary) return;
     const income = read('income');
     const housing = read('housing');
     const food = read('food');
