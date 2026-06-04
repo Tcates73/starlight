@@ -1,0 +1,3 @@
+## 2024-05-15 - ARIA Live and TS Types in Astro Scripts
+**Learning:** Dynamically updated text in dashboards (like score, stress, health meters) aren't announced by screen readers without `aria-live="polite"`. Additionally, when using vanilla `<script>` tags in Astro components, TypeScript is enabled by default. Thus, `document.getElementById` requires appropriate type assertions and null-checks (`as HTMLElement | null`, followed by `if (element) ...`) to avoid failing the build checks.
+**Action:** Always add `aria-live="polite"` to status/health indicator text in dashboard UI elements. Always properly typecast and null-check DOM elements fetched via JS in Astro components, to ensure robustness and to prevent Astro checks from failing.
