@@ -42,7 +42,7 @@
       <div class="meter-wrap">
         <div id="healthMeter" class="meter"></div>
       </div>
-      <p id="healthText">Great start! 🟢</p>
+      <p id="healthText" aria-live="polite">Great start! 🟢</p>
     </article>
 
     <article>
@@ -50,13 +50,13 @@
       <div class="meter-wrap danger">
         <div id="stressMeter" class="meter"></div>
       </div>
-      <p id="stressText">Calm and confident 😌</p>
+      <p id="stressText" aria-live="polite">Calm and confident 😌</p>
     </article>
 
     <article>
       <h3>Family XP</h3>
-      <p id="xpValue" class="xp">0 XP</p>
-      <p id="summary">Enter numbers to begin your quest.</p>
+      <p id="xpValue" class="xp" aria-live="polite">0 XP</p>
+      <p id="summary" aria-live="polite">Enter numbers to begin your quest.</p>
     </article>
   </div>
 </section>
@@ -168,16 +168,19 @@
 </style>
 
 <script>
-  const form = document.getElementById('budgetForm');
-  const timerValue = document.getElementById('timerValue');
-  const healthMeter = document.getElementById('healthMeter');
-  const stressMeter = document.getElementById('stressMeter');
-  const healthText = document.getElementById('healthText');
-  const stressText = document.getElementById('stressText');
-  const xpValue = document.getElementById('xpValue');
-  const summary = document.getElementById('summary');
+  const form = document.getElementById('budgetForm') as HTMLFormElement | null;
+  const timerValue = document.getElementById('timerValue') as HTMLElement | null;
+  const healthMeter = document.getElementById('healthMeter') as HTMLElement | null;
+  const stressMeter = document.getElementById('stressMeter') as HTMLElement | null;
+  const healthText = document.getElementById('healthText') as HTMLElement | null;
+  const stressText = document.getElementById('stressText') as HTMLElement | null;
+  const xpValue = document.getElementById('xpValue') as HTMLElement | null;
+  const summary = document.getElementById('summary') as HTMLElement | null;
 
-  const read = (name) => Number(form?.elements?.[name]?.value || 0);
+  const read = (name: string) => {
+    const el = form?.elements.namedItem(name) as HTMLInputElement | null;
+    return Number(el?.value || 0);
+  };
 
   function updateDashboard() {
     const income = read('income');
@@ -188,7 +191,7 @@
     const savings = read('savings');
     const minutes = read('minutes');
 
-    timerValue.textContent = String(minutes);
+    if (timerValue) timerValue.textContent = String(minutes);
 
     const spent = housing + food + transport + fun + savings;
     const leftover = income - spent;
@@ -207,25 +210,27 @@
     const stress = 100 - health;
     const xp = Math.max(0, Math.round(health * 9 + Math.max(0, leftover) / 5 - minutes * 2));
 
-    healthMeter.style.width = `${health}%`;
-    stressMeter.style.width = `${stress}%`;
-    xpValue.textContent = `${xp} XP`;
+    if (healthMeter) healthMeter.style.width = `${health}%`;
+    if (stressMeter) stressMeter.style.width = `${stress}%`;
+    if (xpValue) xpValue.textContent = `${xp} XP`;
 
     if (health > 79) {
-      healthText.textContent = 'Excellent balance! 🟢';
-      stressText.textContent = 'Low stress, family vibes are strong ✨';
+      if (healthText) healthText.textContent = 'Excellent balance! 🟢';
+      if (stressText) stressText.textContent = 'Low stress, family vibes are strong ✨';
     } else if (health > 55) {
-      healthText.textContent = 'Solid plan, keep optimizing 🟡';
-      stressText.textContent = 'Manageable stress, almost there 💪';
+      if (healthText) healthText.textContent = 'Solid plan, keep optimizing 🟡';
+      if (stressText) stressText.textContent = 'Manageable stress, almost there 💪';
     } else {
-      healthText.textContent = 'High pressure! Rework your mix 🔴';
-      stressText.textContent = 'Stress spike detected — adjust categories 🧠';
+      if (healthText) healthText.textContent = 'High pressure! Rework your mix 🔴';
+      if (stressText) stressText.textContent = 'Stress spike detected — adjust categories 🧠';
     }
 
-    summary.textContent =
-      leftover >= 0
-        ? `You still have $${leftover.toFixed(0)} left this month. Bonus XP for a faster ${minutes}-minute planning sprint.`
-        : `You are over budget by $${Math.abs(leftover).toFixed(0)}. Reduce wants first to calm the stress meter.`;
+    if (summary) {
+      summary.textContent =
+        leftover >= 0
+          ? `You still have $${leftover.toFixed(0)} left this month. Bonus XP for a faster ${minutes}-minute planning sprint.`
+          : `You are over budget by $${Math.abs(leftover).toFixed(0)}. Reduce wants first to calm the stress meter.`;
+    }
   }
 
   form?.addEventListener('input', updateDashboard);
