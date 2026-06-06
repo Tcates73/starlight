@@ -1,0 +1,3 @@
+## 2023-10-27 - Screen Reader Accessibility in Astro Gamified Dashboards
+**Learning:** Dynamically updated feedback nodes (like timer, health, stress, xp, and summaries) in Astro interactive components are easily missed by screen readers since Astro replaces state through simple DOM updates rather than reactivity contexts that could manage ARIA properties automatically.
+**Action:** Always add `aria-live="polite"` directly to the interactive DOM nodes targeted for innerHTML/textContent updates in Astro `<script>` blocks to ensure accessibility is baked into the component markup natively.
