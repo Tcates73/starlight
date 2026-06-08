@@ -1,0 +1,3 @@
+## 2024-06-08 - Dynamic Feedback and Astro Component Type Safety
+**Learning:** When using Astro components, DOM lookups inside `<script>` tags need explicit TypeScript typecasting (e.g., `as HTMLElement | null`) and null-checks to satisfy the build tools and `astro check`. Additionally, elements displaying dynamic updates (like scores, statuses, and XP) must include `aria-live="polite"` to ensure screen readers appropriately narrate the changes.
+**Action:** Always add `aria-live` to dynamically changing status text nodes and remember to cast DOM lookup variables explicitly when writing client-side TS in Astro components to avoid build failures.
