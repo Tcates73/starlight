@@ -40,23 +40,23 @@
     <article>
       <h3>Budget Health</h3>
       <div class="meter-wrap">
-        <div id="healthMeter" class="meter"></div>
+        <div id="healthMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
-      <p id="healthText">Great start! 🟢</p>
+      <p id="healthText" aria-live="polite">Great start! 🟢</p>
     </article>
 
     <article>
       <h3>Stress Meter</h3>
       <div class="meter-wrap danger">
-        <div id="stressMeter" class="meter"></div>
+        <div id="stressMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
-      <p id="stressText">Calm and confident 😌</p>
+      <p id="stressText" aria-live="polite">Calm and confident 😌</p>
     </article>
 
     <article>
       <h3>Family XP</h3>
-      <p id="xpValue" class="xp">0 XP</p>
-      <p id="summary">Enter numbers to begin your quest.</p>
+      <p id="xpValue" class="xp" aria-live="polite">0 XP</p>
+      <p id="summary" aria-live="polite">Enter numbers to begin your quest.</p>
     </article>
   </div>
 </section>
@@ -208,7 +208,9 @@
     const xp = Math.max(0, Math.round(health * 9 + Math.max(0, leftover) / 5 - minutes * 2));
 
     healthMeter.style.width = `${health}%`;
+    healthMeter.setAttribute('aria-valuenow', health.toString());
     stressMeter.style.width = `${stress}%`;
+    stressMeter.setAttribute('aria-valuenow', stress.toString());
     xpValue.textContent = `${xp} XP`;
 
     if (health > 79) {
