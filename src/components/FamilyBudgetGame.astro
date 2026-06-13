@@ -6,33 +6,33 @@
   </header>
 
   <form id="budgetForm" class="grid">
-    <label>
-      Total monthly income ($)
-      <input type="number" name="income" min="0" step="50" value="6000" required />
+    <label for="income">
+      Total monthly income ($) <span class="req" aria-hidden="true">*</span>
+      <input id="income" type="number" name="income" min="0" step="50" value="6000" required />
     </label>
-    <label>
-      Housing ($)
-      <input type="number" name="housing" min="0" step="10" value="1800" required />
+    <label for="housing">
+      Housing ($) <span class="req" aria-hidden="true">*</span>
+      <input id="housing" type="number" name="housing" min="0" step="10" value="1800" required />
     </label>
-    <label>
-      Food ($)
-      <input type="number" name="food" min="0" step="10" value="900" required />
+    <label for="food">
+      Food ($) <span class="req" aria-hidden="true">*</span>
+      <input id="food" type="number" name="food" min="0" step="10" value="900" required />
     </label>
-    <label>
-      Transport ($)
-      <input type="number" name="transport" min="0" step="10" value="500" required />
+    <label for="transport">
+      Transport ($) <span class="req" aria-hidden="true">*</span>
+      <input id="transport" type="number" name="transport" min="0" step="10" value="500" required />
     </label>
-    <label>
-      Family fun ($)
-      <input type="number" name="fun" min="0" step="10" value="350" required />
+    <label for="fun">
+      Family fun ($) <span class="req" aria-hidden="true">*</span>
+      <input id="fun" type="number" name="fun" min="0" step="10" value="350" required />
     </label>
-    <label>
-      Savings goal ($)
-      <input type="number" name="savings" min="0" step="10" value="1200" required />
+    <label for="savings">
+      Savings goal ($) <span class="req" aria-hidden="true">*</span>
+      <input id="savings" type="number" name="savings" min="0" step="10" value="1200" required />
     </label>
-    <label class="wide">
+    <label for="minutes" class="wide">
       Budget sprint timer: <span id="timerValue">15</span> minutes
-      <input type="range" name="minutes" min="5" max="45" value="15" step="5" />
+      <input id="minutes" type="range" name="minutes" min="5" max="45" value="15" step="5" />
     </label>
   </form>
 
@@ -104,6 +104,10 @@
     grid-column: 1 / -1;
   }
 
+  .req {
+    color: #ef4444;
+  }
+
   input {
     width: 100%;
     border-radius: 0.6rem;
@@ -111,6 +115,11 @@
     background: #0f172a;
     color: #f8fafc;
     padding: 0.45rem 0.6rem;
+  }
+
+  input:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
   }
 
   .hud {
