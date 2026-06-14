@@ -111,6 +111,17 @@
     background: #0f172a;
     color: #f8fafc;
     padding: 0.45rem 0.6rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  input:hover {
+    border-color: rgba(148, 163, 184, 0.8);
+  }
+
+  input:focus-visible {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px #38bdf8;
   }
 
   .hud {
