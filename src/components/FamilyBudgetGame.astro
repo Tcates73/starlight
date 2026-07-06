@@ -38,17 +38,17 @@
 
   <div class="hud">
     <article>
-      <h3>Budget Health</h3>
+      <h3 id="healthMeterLabel">Budget Health</h3>
       <div class="meter-wrap">
-        <div id="healthMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+        <div id="healthMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-labelledby="healthMeterLabel"></div>
       </div>
       <p id="healthText" aria-live="polite">Great start! 🟢</p>
     </article>
 
     <article>
-      <h3>Stress Meter</h3>
+      <h3 id="stressMeterLabel">Stress Meter</h3>
       <div class="meter-wrap danger">
-        <div id="stressMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+        <div id="stressMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-labelledby="stressMeterLabel"></div>
       </div>
       <p id="stressText" aria-live="polite">Calm and confident 😌</p>
     </article>
