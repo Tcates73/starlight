@@ -38,17 +38,17 @@
 
   <div class="hud">
     <article>
-      <h3>Budget Health</h3>
+      <h3 id="healthLabel">Budget Health</h3>
       <div class="meter-wrap">
-        <div id="healthMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+        <div id="healthMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-labelledby="healthLabel"></div>
       </div>
       <p id="healthText" aria-live="polite">Great start! 🟢</p>
     </article>
 
     <article>
-      <h3>Stress Meter</h3>
+      <h3 id="stressLabel">Stress Meter</h3>
       <div class="meter-wrap danger">
-        <div id="stressMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+        <div id="stressMeter" class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-labelledby="stressLabel"></div>
       </div>
       <p id="stressText" aria-live="polite">Calm and confident 😌</p>
     </article>
@@ -111,6 +111,11 @@
     background: #0f172a;
     color: #f8fafc;
     padding: 0.45rem 0.6rem;
+  }
+
+  input:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
   }
 
   .hud {
