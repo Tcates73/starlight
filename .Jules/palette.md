@@ -1,3 +1,5 @@
 ## 2024-02-14 - Dynamic Text Accessibility
 **Learning:** Adding `aria-live="polite"` to dynamically updated text nodes that convey important feedback (e.g., scores, status texts in dashboards) ensures proper screen reader accessibility. Progress bars should also have `role="progressbar"`, `aria-valuemin`, `aria-valuemax`, and dynamic `aria-valuenow`.
-**Action:** Always verify if text nodes updated via JavaScript convey status or feedback, and apply `aria-live="polite"` to them. Apply appropriate ARIA progressbar roles to custom visual meters.
+**Action:** Always verify if text nodes updated via JavaScript convey status or feedback, and apply `aria-live="polite"` to them. Apply appropriate ARIA progressbar roles to custom visual meters.## 2024-10-18 - Screen Reader Context for Custom Meters
+**Learning:** Custom visual meters (like `role="progressbar"`) require an explicit label association (`aria-labelledby` pointing to a visible heading/label) to provide proper context for screen reader users. Without it, the meter's purpose is ambiguous.
+**Action:** Always pair `role="progressbar"` elements with an `aria-labelledby` attribute pointing to an existing heading or label ID, especially in dashboard components.
