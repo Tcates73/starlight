@@ -6,33 +6,33 @@
   </header>
 
   <form id="budgetForm" class="grid">
-    <label>
+    <label for="income">
       Total monthly income ($)
-      <input type="number" name="income" min="0" step="50" value="6000" required />
+      <input type="number" id="income" name="income" min="0" step="50" value="6000" required />
     </label>
-    <label>
+    <label for="housing">
       Housing ($)
-      <input type="number" name="housing" min="0" step="10" value="1800" required />
+      <input type="number" id="housing" name="housing" min="0" step="10" value="1800" required />
     </label>
-    <label>
+    <label for="food">
       Food ($)
-      <input type="number" name="food" min="0" step="10" value="900" required />
+      <input type="number" id="food" name="food" min="0" step="10" value="900" required />
     </label>
-    <label>
+    <label for="transport">
       Transport ($)
-      <input type="number" name="transport" min="0" step="10" value="500" required />
+      <input type="number" id="transport" name="transport" min="0" step="10" value="500" required />
     </label>
-    <label>
+    <label for="fun">
       Family fun ($)
-      <input type="number" name="fun" min="0" step="10" value="350" required />
+      <input type="number" id="fun" name="fun" min="0" step="10" value="350" required />
     </label>
-    <label>
+    <label for="savings">
       Savings goal ($)
-      <input type="number" name="savings" min="0" step="10" value="1200" required />
+      <input type="number" id="savings" name="savings" min="0" step="10" value="1200" required />
     </label>
-    <label class="wide">
+    <label class="wide" for="minutes">
       Budget sprint timer: <span id="timerValue">15</span> minutes
-      <input type="range" name="minutes" min="5" max="45" value="15" step="5" />
+      <input type="range" id="minutes" name="minutes" min="5" max="45" value="15" step="5" />
     </label>
   </form>
 
@@ -238,6 +238,7 @@
     }
   }
 
+  form?.addEventListener('submit', (e) => e.preventDefault());
   form?.addEventListener('input', updateDashboard);
   updateDashboard();
 </script>
