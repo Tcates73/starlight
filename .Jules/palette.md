@@ -4,3 +4,6 @@
 ## 2024-03-24 - Progress Bar Screen Reader Context
 **Learning:** Custom `role="progressbar"` elements often lack descriptive context when read by screen readers.
 **Action:** Always pair custom visual meters with an `aria-labelledby` attribute pointing to a visible heading or label ID to ensure proper screen reader context.
+## 2024-05-24 - Form Labeling and Submit Prevention
+**Learning:** For accessibility on custom interactive client-side forms, implicit label wrapping is sometimes insufficient for some screen readers. Explicit `for` and `id` linking makes it much more robust. Also, single-page application forms without a backend must prevent the default submit event to avoid unexpected page reloads when pressing Enter inside inputs.
+**Action:** Use explicit `for` and `id` linking for inputs and always prevent default on `submit` events for purely interactive client-side forms.
