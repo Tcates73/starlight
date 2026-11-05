@@ -1,11 +1,11 @@
-<section class="budget-game">
+<section class="budget-game" aria-labelledby="dashboard-heading">
   <header>
     <p class="eyebrow">Family Budget Quest</p>
-    <h2>Stress-less Budget Dashboard</h2>
+    <h2 id="dashboard-heading">Stress-less Budget Dashboard</h2>
     <p>Fill in your monthly numbers and watch your family level up in real time.</p>
   </header>
 
-  <form id="budgetForm" class="grid">
+  <form id="budgetForm" class="grid" aria-label="Budget configuration">
     <label for="income">
       Total monthly income ($)
       <input id="income" type="number" name="income" min="0" step="50" value="6000" required />
@@ -189,6 +189,9 @@
     const minutes = read('minutes');
 
     if (timerValue) timerValue.textContent = String(minutes);
+
+    const minutesInput = document.getElementById('minutes');
+    if (minutesInput) minutesInput.setAttribute('aria-valuetext', `${minutes} minutes`);
 
     const spent = housing + food + transport + fun + savings;
     const leftover = income - spent;

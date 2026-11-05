@@ -7,3 +7,6 @@
 ## 2024-05-24 - Form Labeling and Submit Prevention
 **Learning:** For accessibility on custom interactive client-side forms, implicit label wrapping is sometimes insufficient for some screen readers. Explicit `for` and `id` linking makes it much more robust. Also, single-page application forms without a backend must prevent the default submit event to avoid unexpected page reloads when pressing Enter inside inputs.
 **Action:** Use explicit `for` and `id` linking for inputs and always prevent default on `submit` events for purely interactive client-side forms.
+## 2024-06-15 - Range Input Accessibility
+**Learning:** Range inputs (`type="range"`) often need contextual values read aloud to screen readers as the value changes. Relying solely on a sibling `<span>` for visual updates is insufficient for non-visual users.
+**Action:** Always add `aria-valuetext` to range inputs and update it dynamically via JavaScript to ensure screen readers announce the human-readable meaning (e.g., "15 minutes") during interaction.
