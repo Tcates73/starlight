@@ -32,7 +32,7 @@
     </label>
     <label class="wide" for="minutes">
       Budget sprint timer: <span id="timerValue">15</span> minutes
-      <input id="minutes" type="range" name="minutes" min="5" max="45" value="15" step="5" />
+      <input id="minutes" type="range" name="minutes" min="5" max="45" value="15" step="5" aria-valuetext="15 minutes" />
     </label>
   </form>
 
@@ -188,7 +188,11 @@
     const savings = read('savings');
     const minutes = read('minutes');
 
-    if (timerValue) timerValue.textContent = String(minutes);
+    if (timerValue) {
+      timerValue.textContent = String(minutes);
+      const minutesInput = form?.elements?.['minutes'];
+      if (minutesInput) minutesInput.setAttribute('aria-valuetext', `${minutes} minutes`);
+    }
 
     const spent = housing + food + transport + fun + savings;
     const leftover = income - spent;
