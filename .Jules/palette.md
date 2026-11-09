@@ -7,3 +7,6 @@
 ## 2024-05-24 - Form Labeling and Submit Prevention
 **Learning:** For accessibility on custom interactive client-side forms, implicit label wrapping is sometimes insufficient for some screen readers. Explicit `for` and `id` linking makes it much more robust. Also, single-page application forms without a backend must prevent the default submit event to avoid unexpected page reloads when pressing Enter inside inputs.
 **Action:** Use explicit `for` and `id` linking for inputs and always prevent default on `submit` events for purely interactive client-side forms.
+## 2024-11-09 - Ensure PRs remain strictly scoped to code changes
+**Learning:** Automatically generated lockfiles (like `pnpm-lock.yaml`) from running installation and build steps locally can easily slip into commits, breaking the strict <50 lines rule for micro-UX improvements.
+**Action:** Always unstage and remove automatically generated lockfiles using `git restore --staged <file>` and `rm <file>` before creating the final PR, unless explicitly updating dependencies.
